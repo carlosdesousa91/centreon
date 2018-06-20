@@ -59,10 +59,12 @@ if (isset($_GET["host_id"]) && isset($_GET["id"]) && isset($_GET["color"])) {
     }
 
     if ($accessService) {
+        /* Use "like" instead of "=" to avoid mysql bug on partitioned tables */
         $DBRESULT = $pearDBO->query(
-            "SELECT  * FROM `log_archive_service` WHERE host_id = '".
-            $pearDBO->escape($_GET["host_id"])."' AND service_id = ".
-            $pearDBO->escape($_GET["id"])." ORDER BY `date_start` DESC"
+            "SELECT  * FROM `log_archive_service` " .
+            "WHERE host_id LIKE " . $pearDBO->escape($_GET["host_id"]) . " " .
+            "AND service_id LIKE " . $pearDBO->escape($_GET["id"]) . " " .
+            "ORDER BY `date_start` DESC"
         );
         while ($row = $DBRESULT->fetchRow()) {
             fillBuffer($statesTab, $row, $color);

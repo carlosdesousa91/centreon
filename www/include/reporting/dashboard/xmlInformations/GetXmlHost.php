@@ -60,10 +60,11 @@ if (isset($_GET["id"]) && isset($_GET["color"])) {
     }
 
     if ($accessHost) {
+        /* Use "like" instead of "=" to avoid mysql bug on partitioned tables */
         $DBRESULT = $pearDBO->query(
-            "SELECT  * FROM `log_archive_host` WHERE host_id = "
-            . $pearDBO->escape($_GET["id"])
-            . " order by date_start desc"
+            "SELECT  * FROM `log_archive_host` " .
+            "WHERE host_id LIKE " . $pearDBO->escape($_GET["id"]) . " " .
+            "ORDER BY date_start desc"
         );
         while ($row = $DBRESULT->fetchRow()) {
             fillBuffer($statesTab, $row, $color);
